@@ -3,7 +3,6 @@ import torch
 
 class Retrace:
     def __init__(self):
-        super(Retrace, self).__init__()
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
     def __call__(self,
@@ -50,7 +49,7 @@ class Retrace:
             # We don't want gradients from computing Q_ret, since:
             # ∇φ (Q - Q_ret)^2 ∝ (Q - Q_ret) * ∇φ Q
             c_ret = self.calc_retrace_weights(target_policy_probs, behaviour_policy_probs)
-            Q_ret = torch.zeros_like(Q, dtype=torch.float)  # (B,T)
+            Q_ret = torch.zeros_like(Q, dtype=torch.float, device=self.device)  # (B,T)
 
             Q_ret[:, -1] = target_Q[:, -1]
             for t in reversed(range(1, T)):
